@@ -12,13 +12,13 @@ public class QuestionController {
     // Page to create inquiry
     @RequestMapping(value = "/")
     public String index(){
-        return ""; // index
+        return "index.html"; // index
     }
 
     // Page to customize inquiry
     @RequestMapping(value = "/inquiry")
     public String inquiry(){
-        return ""; // inquiry.html
+        return "inquiry.html"; // inquiry.html
     }
 
     // Method to save created inquiry

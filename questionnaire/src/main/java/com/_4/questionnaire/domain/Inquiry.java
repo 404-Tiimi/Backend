@@ -4,26 +4,40 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity 
 public class Inquiry {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int _id;
+    
+    @Column(name="title")
     private String _title;
-    private String _author;
+
+    @ManyToOne
+    @JoinColumn(name="User_id")
+    private User _author;
+
+    @Column(name = "createDate")
     private LocalDate _createDate;
+
+    @Column(name = "deadline")
     private LocalDate _deadlineDate;
 
-    @OneToMany
-    List<Question> _questions = new ArrayList<Question>();
+    // referencing variable name in Questions.java, not the db column name
+    @OneToMany(mappedBy = "_inquiry")
+    List<Question> _questions = new ArrayList<>();
 
-    public Inquiry(int id,String title, String author,
+    public Inquiry(int id,String title, User author,
         LocalDate createDate, LocalDate deadlineDate, List<Question> questions) {
         _id = id;
         _title = title;
@@ -43,7 +57,7 @@ public class Inquiry {
     public void setTitle(String title) {
         _title = title;
     }
-    public void setAuthor(String author) {
+    public void setAuthor(User author) {
         _author = author;
     }
     public void setCreateDate(LocalDate createDate) {
@@ -63,7 +77,7 @@ public class Inquiry {
     public String getTitle() {
         return _title;
     }
-    public String getAuthor() {
+    public User getAuthor() {
         return _author;
     }
     public LocalDate getCreateDate() {

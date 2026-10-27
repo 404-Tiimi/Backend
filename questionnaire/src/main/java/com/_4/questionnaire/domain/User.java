@@ -1,16 +1,25 @@
 package com._4.questionnaire.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity 
 public class User {
     @Id 
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int _id;
 
+    @Column(name="role")
     private String _role;
     
+    @Column(name="username")
     private String _username;
+
+    @Column(name="passwordhash")
     private String _hashPassword;
 
     public User(String role, int id, String username, String hashPassword) {

@@ -1,5 +1,6 @@
 package com._4.questionnaire.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,20 +12,24 @@ import jakarta.persistence.ManyToOne;
 public class Answer {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private int _id;
 
     @ManyToOne
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "Question_id")
     private Question _question;
 
-    private int _sessio_id;
+    @ManyToOne 
+    @JoinColumn(name = "Session_id")
+    private Session _session;
 
+    @Column(name="answer")
     private String  _answer;
 
-    public Answer(int id, Question question, int sessio_id, String answer) {
+    public Answer(int id, Question question, Session session, String answer) {
         _id = id;
         _question = question;
-        _sessio_id = sessio_id;
+        _session = session;
         _answer = answer;
     }
 
@@ -40,8 +45,8 @@ public class Answer {
         _question = question;
     }
 
-    public void setSessio_id(int sessio_id) {
-        _sessio_id = sessio_id;
+    public void setSessio(Session session) {
+        _session = session;
     }
 
     public void setAnswer(String answer) {
@@ -56,8 +61,8 @@ public class Answer {
         return _question;
     }
 
-    public int getSessio_id() {
-        return _sessio_id;
+    public Session getSessio() {
+        return _session;
     }
 
     public String getAnswer() {

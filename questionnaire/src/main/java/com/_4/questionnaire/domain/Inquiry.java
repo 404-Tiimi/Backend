@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Entity 
 public class Inquiry {
@@ -19,6 +20,7 @@ public class Inquiry {
     private LocalDate _createDate;
     private LocalDate _deadlineDate;
 
+    @OneToMany
     List<Question> _questions = new ArrayList<Question>();
 
     public Inquiry(int id,String title, String author,

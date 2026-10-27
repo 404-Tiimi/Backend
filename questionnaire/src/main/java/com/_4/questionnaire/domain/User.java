@@ -1,11 +1,15 @@
 package com._4.questionnaire.domain;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 @Entity 
 public class User {
-    private String _role;
+    @Id 
     private int _id;
+
+    private String _role;
+    
     private String _username;
     private String _hashPassword;
 

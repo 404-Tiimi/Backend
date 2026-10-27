@@ -6,8 +6,27 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com._4.questionnaire.domain.AnswerRepository;
+import com._4.questionnaire.domain.InquiryRepository;
+import com._4.questionnaire.domain.QuestionRepository;
+import com._4.questionnaire.domain.UserRepository;
+
 @Controller 
 public class QuestionController {
+
+    private AnswerRepository aRepository;
+    private InquiryRepository iRepository;
+    private QuestionRepository qRepository;
+    private UserRepository uRepository;
+
+    public QuestionController (AnswerRepository aRepository,
+    InquiryRepository iRepository, QuestionRepository qRepository,
+    UserRepository uRepository){
+        this.aRepository = aRepository;
+        this.iRepository = iRepository;
+        this.qRepository = qRepository;
+        this.uRepository = uRepository;
+    }
 
     // Page to create inquiry
     @RequestMapping(value = "/")

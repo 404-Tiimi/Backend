@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 
 @Entity 
 public class Answer {
@@ -13,12 +13,10 @@ public class Answer {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int _id;
 
-    @OneToMany 
-    @JoinColumn (name ="question_id")
+    @ManyToOne
+    @JoinColumn(name = "question_id")
     private Question _question;
 
-    @Id 
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int _sessio_id;
 
     private String  _answer;
@@ -67,4 +65,3 @@ public class Answer {
     }
 
 }
-

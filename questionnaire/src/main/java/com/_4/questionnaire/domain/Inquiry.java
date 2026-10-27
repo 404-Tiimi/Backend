@@ -10,7 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity 
-public class Questionnaire {
+public class Inquiry {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int _id;
@@ -21,7 +21,7 @@ public class Questionnaire {
 
     List<Question> _questions = new ArrayList<Question>();
 
-    public Questionnaire(int id,String title, String author,
+    public Inquiry(int id,String title, String author,
         LocalDate createDate, LocalDate deadlineDate, List<Question> questions) {
         _id = id;
         _title = title;
@@ -31,7 +31,7 @@ public class Questionnaire {
         _questions = questions;
     }
 
-    public Questionnaire(){
+    public Inquiry(){
 
     }
 

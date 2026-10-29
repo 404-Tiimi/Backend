@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +35,7 @@ public class Inquiry {
     private LocalDate _deadlineDate;
 
     // referencing variable name in Questions.java, not the db column name
-    @OneToMany(mappedBy = "_inquiry")
+    @OneToMany(mappedBy = "_inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Question> _questions = new ArrayList<>();
 
     public Inquiry(int id,String title, User author,
@@ -69,6 +70,16 @@ public class Inquiry {
 
     public void setQuestions(List<Question> questions) {
         _questions = questions;
+    }
+
+    public void addQuestion(Question question) {
+        _questions.add(question);
+        question.setInquiry(this);
+    }
+
+    public void removeQuestion(Question question) {
+        _questions.remove(question);
+        question.setInquiry(null);
     }
 
     public int getId() {

@@ -7,10 +7,29 @@
 </head>
 <body>
 
-    <form th:action="@{/inquiry}" method="post">
+    <form th:action="@{/inquiry}" method="get">
         <button type="submit">Create inquiry</button>
     </form>
-    
+
+    <h1>Inquiries</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Created</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="inquiry : ${inquiries}">
+                <td th:text="${inquiry.id}"></td>
+                <td th:text="${inquiry.title}"></td>
+                <td th:text="${inquiry.createDate}"></td>
+                <td th:text="${inquiry.deadlineDate}"></td>
+            </tr>
+        </tbody>
+    </table>
     
 </body>
 </html>

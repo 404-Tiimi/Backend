@@ -37,14 +37,14 @@ public class Question {
     public String getQuest() {
         return _quest;
     }
-    public void set_quest(String quest) {
+    public void setQuestion(String quest) {
         _quest = quest;
     }
 
-    public Inquiry get_inquiry() {
+    public Inquiry getInquiry() {
         return _inquiry;
     }
-    public void set_inquiry(Inquiry _inquiry) {
+    public void setInquiry(Inquiry _inquiry) {
         this._inquiry = _inquiry;
     }
     public String get_type() {

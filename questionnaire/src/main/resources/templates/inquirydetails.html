@@ -8,6 +8,9 @@
 <body>
     <h1 th:text="${inquiry.title}"></h1>
 
+    <p>Description:</p>
+    <p th:text="${inquiry.description}"></p>
+
     <p>Author:</p>
     <p>Create date: <span th:text="${inquiry.createDate}"></span></p>
     <p>Deadline date: <span th:text="${inquiry.deadlineDate}"></span></p>

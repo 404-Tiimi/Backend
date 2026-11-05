@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -14,7 +16,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
-@Entity 
+@Entity
 public class Inquiry {
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,6 +41,7 @@ public class Inquiry {
 
     // referencing variable name in Questions.java, not the db column name
     @OneToMany(mappedBy = "_inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
+   // @JsonIgnoreProperties("inquiry")
     List<Question> _questions = new ArrayList<>();
 
     public Inquiry(int id,String title, String description ,User author,

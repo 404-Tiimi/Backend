@@ -1,5 +1,7 @@
 package com._4.questionnaire.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -21,6 +23,7 @@ public class User {
     @Column(name="username")
     private String _username;
 
+    @JsonIgnore 
     @Column(name="passwordhash")
     private String _hashPassword;
 

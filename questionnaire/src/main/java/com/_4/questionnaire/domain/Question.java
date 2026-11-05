@@ -1,5 +1,7 @@
 package com._4.questionnaire.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +26,7 @@ public class Question {
 
     @ManyToOne 
     @JoinColumn(name="inquiry_id")
+    @JsonIgnore 
     private Inquiry _inquiry;
 
     
@@ -41,6 +44,7 @@ public class Question {
         _quest = quest;
     }
 
+    @JsonIgnore 
     public Inquiry getInquiry() {
         return _inquiry;
     }

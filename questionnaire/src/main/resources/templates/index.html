@@ -27,6 +27,7 @@
                 <td th:text="${inquiry.title}"></td>
                 <td th:text="${inquiry.createDate}"></td>
                 <td th:text="${inquiry.deadlineDate}"></td>
+                <td><a th:href="@{/view/{id}(id= ${inquiry.id})}"><button>View</button></a></td>
             </tr>
         </tbody>
     </table>

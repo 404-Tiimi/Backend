@@ -47,6 +47,13 @@ public class QuestionController {
         return "inquiry.html"; // inquiry.html
     }
 
+    @RequestMapping (value = "/view/{id}")
+    public String viewInquiry(@PathVariable ("id") Integer id ,Model model){
+        Inquiry inquiry = iRepository.findById(id).orElse(null);
+        model.addAttribute("inquiry", inquiry);
+        return "inquirydetails"; // inquirydetail.html
+    }
+
     // Method to save created inquiry
     @RequestMapping(value = "/save",method=RequestMethod.POST)
     public String save(@RequestParam("title") String title,

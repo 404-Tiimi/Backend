@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>See inquiry</title>
+</head>
+<body>
+    <h1 th:text="${inquiry.title}"></h1>
+
+    <p>Author:</p>
+    <p>Create date: <span th:text="${inquiry.createDate}"></span></p>
+    <p>Deadline date: <span th:text="${inquiry.deadlineDate}"></span></p>
+
+    <form>
+        <div th:each="question, stat : ${inquiry.questions}">
+            <label th:for="'q' + ${question.id}"
+            th:text="${stat.count} + '. ' + ${question.quest}">Question</label>
+            <br>
+            <textarea th:id="'q' + ${question.id}"></textarea>
+        </div>
+    </form>
+
+</body>
+</html>

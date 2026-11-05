@@ -24,6 +24,9 @@ public class Inquiry {
     @Column(name="title")
     private String _title;
 
+    @Column (name="description")
+    private String _description;
+
     @ManyToOne
     @JoinColumn(name="User_id")
     private User _author;
@@ -38,10 +41,11 @@ public class Inquiry {
     @OneToMany(mappedBy = "_inquiry", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Question> _questions = new ArrayList<>();
 
-    public Inquiry(int id,String title, User author,
+    public Inquiry(int id,String title, String description ,User author,
         LocalDate createDate, LocalDate deadlineDate, List<Question> questions) {
         _id = id;
         _title = title;
+        _description = description;
         _author = author;
         _createDate = createDate;
         _deadlineDate = deadlineDate;
@@ -58,6 +62,10 @@ public class Inquiry {
     public void setTitle(String title) {
         _title = title;
     }
+    public void setDescription(String description) {
+        _description = description;
+    }
+
     public void setAuthor(User author) {
         _author = author;
     }
@@ -88,6 +96,11 @@ public class Inquiry {
     public String getTitle() {
         return _title;
     }
+
+    public String getDescription() {
+        return _description;
+    }
+
     public User getAuthor() {
         return _author;
     }

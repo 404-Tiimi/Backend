@@ -6,11 +6,14 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com._4.questionnaire.domain.Inquiry;
 import com._4.questionnaire.domain.InquiryRepository;
 import com._4.questionnaire.domain.Question;
 import com._4.questionnaire.domain.QuestionRepository;
+import com._4.questionnaire.domain.User;
+import com._4.questionnaire.domain.UserRepository;
 
 @SpringBootApplication
 public class QuestionnaireApplication {
@@ -21,8 +24,18 @@ public class QuestionnaireApplication {
 
 	@Bean 
 	public CommandLineRunner demo(InquiryRepository iRepository,
-		QuestionRepository qRepository){
+		QuestionRepository qRepository,
+		UserRepository uRepository,
+		PasswordEncoder passwordEncoder){
 			return (args) -> {
+				if (uRepository.findByUsername("user").isEmpty()) {
+					User user = new User();
+					user.setRole("USER");
+					user.setUsername("user");
+					user.setHashPassword(passwordEncoder.encode("user"));
+					uRepository.save(user);
+				}
+
 				Inquiry inquiry = new Inquiry();
 				inquiry.setTitle("Ruokalan palaute kysely");
 				inquiry.setDescription("Esimerkki kyselyn esimerkki kuvaus :)");

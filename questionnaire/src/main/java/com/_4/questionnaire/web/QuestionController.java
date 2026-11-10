@@ -21,9 +21,10 @@ import com._4.questionnaire.domain.UserRepository;
 public class QuestionController {
 
     private AnswerRepository aRepository;
-    private InquiryRepository iRepository;
     private QuestionRepository qRepository;
     private UserRepository uRepository;
+    private InquiryRepository iRepository;
+    
 
     public QuestionController (AnswerRepository aRepository,
     InquiryRepository iRepository, QuestionRepository qRepository,

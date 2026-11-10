@@ -45,7 +45,7 @@ public class Answer {
         _question = question;
     }
 
-    public void setSessio(Session session) {
+    public void setSession(Session session) {
         _session = session;
     }
 
@@ -61,7 +61,7 @@ public class Answer {
         return _question;
     }
 
-    public Session getSessio() {
+    public Session getSession() {
         return _session;
     }
 

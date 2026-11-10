@@ -21,4 +21,27 @@ public class Session {
     @Column(name="completedAt")
     private LocalDateTime _completedAt;
 
+    public Session() {
+    }
+
+    public Session(LocalDateTime startedAt) {
+        _startedAt = startedAt;
+    }
+
+    public int getId() {
+        return _id;
+    }
+
+    public LocalDateTime getStartedAt() {
+        return _startedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return _completedAt;
+    }
+
+    public void setCompletedAt(LocalDateTime completedAt) {
+        _completedAt = completedAt;
+    }
+
 }

@@ -23,6 +23,7 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests( authorize -> authorize 
                 // Rekisteröinti ja staattiset tiedostot ovat julkisia.
                 .requestMatchers("/auth/login").permitAll() // Public signup and static assets.
+                .requestMatchers("/rest/**").permitAll()
                 // Kaikki muut sivut vaativat kirjautumisen.
 				.anyRequest().authenticated()                 // All other paths must be authenticated.
 			)                                             // If you don't give loginPage

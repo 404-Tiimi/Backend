@@ -1,15 +1,33 @@
-#
-# Mvn Build
-#
-FROM maven:3.9-eclipse-temurin-25 AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
+# Build-vaihe
+FROM maven:3.9-eclipse-temurin-25 AS builder
 
-#
-# Jar Package
-#
+WORKDIR /opt/app
+
+# Kopioi Mavenin asetukset ja projektin metadata
+COPY .mvn/ .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x ./mvnw
+
+# Lataa riippuvuudet
+RUN ./mvnw dependency:go-offline
+
+# Kopioi lähdekoodi
+COPY ./src ./src
+
+# Buildaa projekti
+RUN ./mvnw clean install -DskipTests
+
+# Kopioi buildattu JAR-tiedosto suoraan
+RUN cp target/*.jar /opt/app/app.jar
+
+# Runtime-vaihe
 FROM eclipse-temurin:25-jre
-COPY --from=build /home/app/target/questionnaire-0.0.1-SNAPSHOT.jar /usr/local/lib/Questionnaire.jar
+
+WORKDIR /opt/app
+
+# Kopioi buildattu JAR-tiedosto
+COPY --from=builder /opt/app/app.jar /opt/app/app.jar
+
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "/usr/local/lib/Questionnaire.jar"]
+
+ENTRYPOINT ["java", "-jar", "/opt/app/app.jar"]

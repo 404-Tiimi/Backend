@@ -66,7 +66,7 @@ public class WebSecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:5173","https://404-Tiimi.github.io/"));
+		configuration.setAllowedOrigins(List.of("http://localhost:5173","https://404-Tiimi.github.io"));
 		configuration.setAllowedMethods(List.of(
 				"GET", "POST", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Content-Type"));

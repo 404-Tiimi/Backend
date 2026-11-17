@@ -29,13 +29,12 @@ public class WebSecurityConfig {
 		http
 			.cors(Customizer.withDefaults())
 			.csrf(csrf -> csrf
-            .ignoringRequestMatchers("/h2-console/**", "/rest/**"))
+            .ignoringRequestMatchers("/rest/**"))
 
 			.authorizeHttpRequests( authorize -> authorize 
                 // Rekisteröinti ja staattiset tiedostot ovat julkisia.
                 .requestMatchers("/auth/login").permitAll() // Public signup and static assets.
                 .requestMatchers("/rest/**").permitAll()
-				.requestMatchers("/h2-console/**").permitAll()
 				.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 // Kaikki muut sivut vaativat kirjautumisen.
 				.anyRequest().authenticated()                 // All other paths must be authenticated.
@@ -67,7 +66,7 @@ public class WebSecurityConfig {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:5173","https://404-Tiimi.github.io/Frontend/"));
+		configuration.setAllowedOrigins(List.of("http://localhost:5173","https://404-Tiimi.github.io/"));
 		configuration.setAllowedMethods(List.of(
 				"GET", "POST", "OPTIONS"));
 		configuration.setAllowedHeaders(List.of("Content-Type"));

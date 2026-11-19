@@ -33,20 +33,13 @@ public class InquiryRestController {
 
     // Repositoryt hoitavat tietojen hakemisen ja tallentamisen tietokantaan.
     private final InquiryRepository iRepository;
-    private final AnswerRepository answerRepository;
-    private final QuestionRepository questionRepository;
-    private final SessionRepository sessionRepository;
+    private final SessionRepository sRepository;
 
     // Spring antaa tarvittavat repositoryt konstruktorille automaattisesti.
     public InquiryRestController(
-            InquiryRepository iRepository,
-            AnswerRepository answerRepository,
-            QuestionRepository questionRepository,
-            SessionRepository sessionRepository) {
+            InquiryRepository iRepository, SessionRepository sRepository) {
         this.iRepository = iRepository;
-        this.answerRepository = answerRepository;
-        this.questionRepository = questionRepository;
-        this.sessionRepository = sessionRepository;
+        this.sRepository = sRepository;
     }
 
     // Palauttaa kaikki tietokannassa olevat kyselyt.
@@ -64,39 +57,7 @@ public class InquiryRestController {
     // Luo uuden vastaussession ja tallentaa sen alkamisajan.
     @PostMapping("/sessions")
     public Session createSession() {
-        return sessionRepository.save(new Session(LocalDateTime.now()));
-    }
-
-    // Tallentaa kaikki pyynnössä lähetetyt vastaukset samaan sessioon.
-    @PostMapping("/answers")
-    public Iterable<Answer> saveAnswers(@RequestBody SaveAnswersRequest request) {
-        // Haetaan olemassa oleva sessio pyynnössä annetulla ID:llä.
-        Session session = sessionRepository.findById(request.sessionId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Session not found"));
-
-        // Muutetaan jokainen DTO-tietue Answer-entiteetiksi.
-        List<Answer> answers = request.answers().stream()
-                .map(answerRequest -> createAnswer(answerRequest, session))
-                .toList();
-
-        // Tallennetaan kaikki vastaukset tietokantaan.
-        return answerRepository.saveAll(answers);
-    }
-
-    // Luo Answer-entiteetin ja yhdistää sen kysymykseen ja sessioon.
-    private Answer createAnswer(AnswerRequest request, Session session) {
-        // Haetaan vastausta vastaava kysymys sen ID:n perusteella.
-        Question question = questionRepository.findById(request.questionId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Question not found"));
-
-        // Asetetaan vastauksen kysymys, sessio ja tekstisisältö.
-        Answer answer = new Answer();
-        answer.setQuestion(question);
-        answer.setSession(session);
-        answer.setAnswer(request.text());
-        return answer;
+        return sRepository.save(new Session(LocalDateTime.now()));
     }
 
 }

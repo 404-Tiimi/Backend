@@ -17,6 +17,8 @@ import com._4.questionnaire.domain.Question;
 import com._4.questionnaire.domain.QuestionRepository;
 import com._4.questionnaire.domain.UserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller 
 public class QuestionController {
 
@@ -56,19 +58,31 @@ public class QuestionController {
         return "inquirydetails"; // inquirydetail.html
     }
 
-    // Lisää uuden kyselyn ja sen kysymykset tietokantaan
+    // Lisää uuden kyselyn ja sen kysymykset tietokantaan.
+    // Lomakkeen kentät luetaan getParameterValues-metodilla, jotta
+    // @RequestParam ei pilko yksittäistä arvoa pilkuista.
     @RequestMapping(value = "/add",method=RequestMethod.POST)
-    public String add(@RequestParam("title") String title,
-            @RequestParam("questions") List<String> questionTexts){
+    public String add(@RequestParam("title") String title, HttpServletRequest request){
+        return add(title,
+                request.getParameterValues("questions"),
+                request.getParameterValues("types"),
+                request.getParameterValues("options"));
+    }
+
+    String add(String title, String[] questions, String[] types, String[] options) {
         Inquiry inquiry = new Inquiry();
         inquiry.setTitle(title);
         inquiry.setCreateDate(LocalDate.now());
 
-        for (String questionText : questionTexts) {
-            if (questionText != null && !questionText.isBlank()) {
-                Question question = new Question();
-                question.setQuestion(questionText.trim());
-                inquiry.addQuestion(question);
+        if (questions != null) {
+            for (int i = 0; i < questions.length; i++) {
+                String questionText = questions[i];
+                if (questionText != null && !questionText.isBlank()) {
+                    Question question = new Question();
+                    question.setQuestion(questionText.trim());
+                    applyTypeAndOptions(question, valueAt(types, i), valueAt(options, i));
+                    inquiry.addQuestion(question);
+                }
             }
         }
 
@@ -80,25 +94,39 @@ public class QuestionController {
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String save(@RequestParam("id") Integer inquiryId,
             @RequestParam("title") String title,
-            @RequestParam("questions") List<String> questionTexts) {
+            HttpServletRequest request) {
+        return save(inquiryId, title,
+                request.getParameterValues("questions"),
+                request.getParameterValues("types"),
+                request.getParameterValues("options"));
+    }
+
+    String save(Integer inquiryId, String title,
+            String[] questions, String[] types, String[] options) {
         Inquiry inquiry = iRepository.findById(inquiryId).orElseThrow();
         inquiry.setTitle(title);
 
         List<Question> existingQuestions = inquiry.getQuestions();
         int questionIndex = 0;
-        for (String questionText : questionTexts) {
-            if (questionText != null && !questionText.isBlank()) {
+        if (questions != null) {
+            for (int i = 0; i < questions.length; i++) {
+                String questionText = questions[i];
+                if (questionText == null || questionText.isBlank()) {
+                    continue;
+                }
                 String updatedText = questionText.trim();
+                Question question;
                 if (questionIndex < existingQuestions.size()) {
-                    Question question = existingQuestions.get(questionIndex);
+                    question = existingQuestions.get(questionIndex);
                     if (!updatedText.equals(question.getQuest())) {
                         question.setQuestion(updatedText);
                     }
                 } else {
-                    Question question = new Question();
+                    question = new Question();
                     question.setQuestion(updatedText);
                     inquiry.addQuestion(question);
                 }
+                applyTypeAndOptions(question, valueAt(types, i), valueAt(options, i));
                 questionIndex++;
             }
         }
@@ -125,5 +153,21 @@ public class QuestionController {
         return "inquiry";
     }
 
+    // Asettaa kysymyksen tyypin ja (monivalinnalle) vaihtoehdot, yksi per rivi
+    private void applyTypeAndOptions(Question q, String type, String optionsText) {
+        q.setType(Question.TYPE_RADIO.equals(type) ? Question.TYPE_RADIO : Question.TYPE_TEXT);
+        q.getOptions().clear();
+        if (Question.TYPE_RADIO.equals(type) && optionsText != null) {
+            for (String line : optionsText.split("\\R")) {
+                if (!line.isBlank()) {
+                    q.getOptions().add(line.trim());
+                }
+            }
+        }
+    }
+
+    private static String valueAt(String[] values, int index) {
+        return values != null && index < values.length ? values[index] : null;
+    }
 
 }

@@ -56,7 +56,7 @@ public class QuestionnaireApplication {
 					for (String text : questions){
 						Question q = new Question();
 						q.setQuestion(text);
-						q.set_type("Text");
+						q.setType(Question.TYPE_TEXT);
 						inquiry.addQuestion(q);
 					}
 

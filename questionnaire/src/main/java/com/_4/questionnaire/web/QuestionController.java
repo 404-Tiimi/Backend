@@ -84,13 +84,27 @@ public class QuestionController {
         Inquiry inquiry = iRepository.findById(inquiryId).orElseThrow();
         inquiry.setTitle(title);
 
-        inquiry.getQuestions().clear();
+        List<Question> existingQuestions = inquiry.getQuestions();
+        int questionIndex = 0;
         for (String questionText : questionTexts) {
             if (questionText != null && !questionText.isBlank()) {
-                Question question = new Question();
-                question.setQuestion(questionText.trim());
-                inquiry.addQuestion(question);
+                String updatedText = questionText.trim();
+                if (questionIndex < existingQuestions.size()) {
+                    Question question = existingQuestions.get(questionIndex);
+                    if (!updatedText.equals(question.getQuest())) {
+                        question.setQuestion(updatedText);
+                    }
+                } else {
+                    Question question = new Question();
+                    question.setQuestion(updatedText);
+                    inquiry.addQuestion(question);
+                }
+                questionIndex++;
             }
+        }
+
+        for (int i = existingQuestions.size() - 1; i >= questionIndex; i--) {
+            inquiry.removeQuestion(existingQuestions.get(i));
         }
 
         iRepository.save(inquiry);

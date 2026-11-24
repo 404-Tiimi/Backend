@@ -27,6 +27,7 @@
                         <th scope="col">Title</th>
                         <th scope="col">Created</th>
                         <th scope="col">Deadline</th>
+                        <th> </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -36,8 +37,10 @@
                         <td th:text="${inquiry.createDate}"></td>
                         <td th:text="${inquiry.deadlineDate}"></td>
                         <td class="text-end">
-                            <a th:href="@{/view/{id}(id= ${inquiry.id})}"><button>View</button></a>
-                            <a th:href="@{/edit/{id}(id=${inquiry.id})}"><button>Edit</button></a>
+                            <a th:href="@{/view/{id}(id= ${inquiry.id})}"
+                            class="btn btn-sm btn-outline-primary"><button>View</button></a>
+                            <a th:href="@{/edit/{id}(id=${inquiry.id})}"
+                            class="btn btn-sm btn-outline-secondary"><button>Edit</button></a>
                         </td>
                     </tr>
                     <tr th:if="${#lists.isEmpty(inquiries)}">

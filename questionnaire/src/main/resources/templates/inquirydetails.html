@@ -6,15 +6,21 @@
     <title>See inquiry</title>
     <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
 </head>
-<body>
+<body class="bg-light">
+    <div class="container py-5" style="max-width: 800px;">
+
     <h1 th:text="${inquiry.title}"></h1>
 
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
     <p>Description:</p>
     <p th:text="${inquiry.description}"></p>
 
     <p>Author:</p>
     <p>Create date: <span th:text="${inquiry.createDate}"></span></p>
     <p>Deadline date: <span th:text="${inquiry.deadlineDate}"></span></p>
+    </div>
+    </div>
 
     <form>
         <div th:each="question, stat : ${inquiry.questions}">
@@ -34,6 +40,8 @@
     <a th:href="@{/edit/{id}(id=${inquiry.id})}">
         <button type="button">Edit questionnaire</button>
     </a>
+
+    </div>
 
 </body>
 </html>

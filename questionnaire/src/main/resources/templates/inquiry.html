@@ -4,19 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questionnaire</title>
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
 </head>
-<body>
+<body class="bg-light">
 
-    <h1 th:text="${inquiry != null} ? 'Edit Questionnaire' : 'Create Questionnaire'"></h1>
+    <div class="container py-5" style="max-width: 800px;">
 
-    <form th:action="${inquiry != null} ? @{/save} : @{/add}" method="post">
-        <input th:if="${inquiry != null}" type="hidden" name="id" th:value="${inquiry.id}">
-        <label for="title">Questionnaire title:</label>
-        <input id="title" name="title" type="text"
-               th:value="${inquiry != null} ? ${inquiry.title} : ''" required>
+    <h1 class="mb-4"
+     th:text="${inquiry != null} ? 'Edit Questionnaire' : 'Create Questionnaire'">
+    </h1>
 
-        <h3>Questions</h3>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+        <form th:action="${inquiry != null} ? @{/save} : @{/add}" method="post">
+            <input th:if="${inquiry != null}" type="hidden" name="id" th:value="${inquiry.id}">
+            <label for="title">Questionnaire title:</label>
+            <input id="title" name="title" type="text" class="form-control"
+                th:value="${inquiry != null} ? ${inquiry.title} : ''" required>
+        </div>
+    </div>
 
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-dark text-white">
+            <h3 class="mb-0">Questions</h3>
+        </div>
+
+    <div class="card-body">
         <div id="question-list">
 
         <!-- MUOKKAUS: olemassa olevat kysymykset -->
@@ -25,7 +38,6 @@
                 <label th:text="'Question ' + ${stat.count}"></label>
                 <input name="questions" type="text"
                        th:value="${question.quest}" placeholder="Write a question">
-
                 <select name="types" onchange="toggleOptions(this)">
                     <option value="TEXT"  th:selected="${question.type == 'TEXT'}">Avoin kysymys</option>
                     <option value="RADIO" th:selected="${question.type == 'RADIO'}">Monivalinta (radio)</option>
@@ -35,9 +47,11 @@
                           th:text="${question.optionsText}"
                           th:style="${question.type == 'RADIO'} ? '' : 'display:none'"></textarea>
 
-                <button type="button" onclick="removeQuestion(this)">Delete</button>
+                <button type="button" class="btn btn-outline-danger" onclick="removeQuestion(this)">Delete</button>
             </div>
+    </div>
         </th:block>
+    </div>
 
         <!-- UUSI KYSELY: vain yksi tyhjä kysymys, lisää tulee "Add question" -napilla -->
         <th:block th:unless="${inquiry != null}">
@@ -58,10 +72,13 @@
         </div>
 
         <br>
-
-        <button type="button" onclick="addQuestion()">Add question</button>
-        <button type="submit">Save questionnaire</button>
+        <div class="d-flex justify-content-between">
+            <a th:href="@{/}" class="btn btn-outline-secondary">Cancel</a>
+            <button type="button" onclick="addQuestion()">Add question</button>
+            <button type="submit">Save questionnaire</button>
+        </div>
     </form>
+    </div>
 
     <script>
         let questionNumber = document.querySelectorAll('#question-list > div').length;

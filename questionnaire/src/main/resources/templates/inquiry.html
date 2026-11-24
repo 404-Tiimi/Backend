@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,66 +7,70 @@
 </head>
 <body>
 
-    <h1>Create Questionnaire</h1>
+    <h1 th:text="${inquiry != null} ? 'Edit Questionnaire' : 'Create Questionnaire'"></h1>
 
-    <form th:action="@{/save}" method="post">
+    <form th:action="${inquiry != null} ? @{/save} : @{/add}" method="post">
+        <input th:if="${inquiry != null}" type="hidden" name="id" th:value="${inquiry.id}">
         <label for="title">Questionnaire title:</label>
-        <input id="title" name="title" type="text" required>
+        <input id="title" name="title" type="text"
+               th:value="${inquiry != null} ? ${inquiry.title} : ''" required>
 
         <h3>Questions</h3>
 
-        <div>
-            <label>Question 1</label>
-            <input name="questions" type="text" placeholder="Write a question">
+        <div id="question-list">
+        <th:block th:if="${inquiry != null}">
+            <div th:each="question, stat : ${inquiry.questions}">
+                <label th:text="'Question ' + ${stat.count}"></label>
+                <input name="questions" type="text"
+                       th:value="${question.quest}" placeholder="Write a question">
+                <button type="button" onclick="removeQuestion(this)">Delete</button>
+            </div>
+        </th:block>
 
-
-            <button type="button">Delete</button>
+        <th:block th:unless="${inquiry != null}">
+            <div th:each="number : ${#numbers.sequence(1, 5)}">
+                <label th:text="'Question ' + ${number}"></label>
+                <input name="questions" type="text" placeholder="Write a question">
+                <button type="button" onclick="removeQuestion(this)">Delete</button>
+            </div>
+        </th:block>
         </div>
 
         <br>
 
-        <div>
-            <label>Question 2</label>
-            <input name="questions" type="text" placeholder="Write a question">
-
-
-            <button type="button">Delete</button>
-        </div>
-
-        <br>
-
-        <div>
-            <label>Question 3</label>
-            <input name="questions" type="text" placeholder="Write a question">
-
-
-            <button type="button">Delete</button>
-        </div>
-
-        <br>
-
-        <div>
-            <label>Question 4</label>
-            <input name="questions" type="text" placeholder="Write a question">
-
-            <button type="button">Delete</button>
-        </div>
-
-        <br>
-
-        <div>
-            <label>Question 5</label>
-            <input name="questions" type="text" placeholder="Write a question">
-
-
-            <button type="button">Delete</button>
-        </div>
-
-        <br>
-
-        <button type="button">Add question</button>
+        <button type="button" onclick="addQuestion()">Add question</button>
         <button type="submit">Save questionnaire</button>
     </form>
+
+    <script>
+        let questionNumber = document.querySelectorAll('#question-list > div').length;
+
+        function addQuestion() {
+            questionNumber++;
+
+            const question = document.createElement('div');
+            question.innerHTML =
+                '<label>Question ' + questionNumber + '</label>' +
+                '<input name="questions" type="text" placeholder="Write a question">' +
+                '<button type="button" onclick="removeQuestion(this)">Delete</button>';
+
+            document.getElementById('question-list').appendChild(question);
+        }
+
+        function removeQuestion(button) {
+            button.parentElement.remove();
+            updateQuestionNumbers();
+        }
+
+        function updateQuestionNumbers() {
+            const questions = document.querySelectorAll('#question-list > div');
+            questionNumber = questions.length;
+
+            questions.forEach((question, index) => {
+                question.querySelector('label').textContent = 'Question ' + (index + 1);
+            });
+        }
+    </script>
 
 </body>
 </html>

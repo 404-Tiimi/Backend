@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +23,10 @@
             <textarea th:id="'q' + ${question.id}"></textarea>
         </div>
     </form>
+
+    <a th:href="@{/edit/{id}(id=${inquiry.id})}">
+        <button type="button">Edit questionnaire</button>
+    </a>
 
 </body>
 </html>

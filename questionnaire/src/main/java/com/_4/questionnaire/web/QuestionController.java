@@ -35,19 +35,20 @@ public class QuestionController {
         this.uRepository = uRepository;
     }
 
-    // Page to create inquiry
+    // Näyttää aloitussivun, jossa kaikki kyselyt on listattu
     @RequestMapping(value = "/")
     public String index(Model model){
         model.addAttribute("inquiries", iRepository.findAll());
         return "index.html"; // index
     }
 
-    // Page to customize inquiry
+    // Näyttää lomakkeen uuden kyselyn luomista varten
     @RequestMapping(value = "/inquiry")
     public String inquiry(){
         return "inquiry.html"; // inquiry.html
     }
 
+    // Näyttää yhden kyselyn tiedot
     @RequestMapping (value = "/view/{id}")
     public String viewInquiry(@PathVariable ("id") Integer id ,Model model){
         Inquiry inquiry = iRepository.findById(id).orElse(null);
@@ -55,9 +56,9 @@ public class QuestionController {
         return "inquirydetails"; // inquirydetail.html
     }
 
-    // Method to save created inquiry
-    @RequestMapping(value = "/save",method=RequestMethod.POST)
-    public String save(@RequestParam("title") String title,
+    // Lisää uuden kyselyn ja sen kysymykset tietokantaan
+    @RequestMapping(value = "/add",method=RequestMethod.POST)
+    public String add(@RequestParam("title") String title,
             @RequestParam("questions") List<String> questionTexts){
         Inquiry inquiry = new Inquiry();
         inquiry.setTitle(title);
@@ -75,14 +76,39 @@ public class QuestionController {
         return "redirect:/"; // redirect to default page
     }
 
+    // Tallentaa muokkaukset olemassa olevaan kyselyyn
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String save(@RequestParam("id") Integer inquiryId,
+            @RequestParam("title") String title,
+            @RequestParam("questions") List<String> questionTexts) {
+        Inquiry inquiry = iRepository.findById(inquiryId).orElseThrow();
+        inquiry.setTitle(title);
+
+        inquiry.getQuestions().clear();
+        for (String questionText : questionTexts) {
+            if (questionText != null && !questionText.isBlank()) {
+                Question question = new Question();
+                question.setQuestion(questionText.trim());
+                inquiry.addQuestion(question);
+            }
+        }
+
+        iRepository.save(inquiry);
+        return "redirect:/";
+    }
+
+    // Poistaa kyselyn
     @RequestMapping(value = "/delete/{_id}", method = RequestMethod.GET)
     public String deleteInquiry(@PathVariable("_id") Long inquiryId, Model model){
         return "redirect:/"; // redirect to default page
     }
 
+    // Hakee muokattavan kyselyn lomakkeelle
     @RequestMapping(value="/edit/{_id}")
-    public String editInquiry(@PathVariable("_id") Long inquiryId, Model model){
-        return ""; // editInquiry.html
+    public String editInquiry(@PathVariable("_id") Integer inquiryId, Model model){
+        Inquiry inquiry = iRepository.findById(inquiryId).orElseThrow();
+        model.addAttribute("inquiry", inquiry);
+        return "inquiry";
     }
 
 

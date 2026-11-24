@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questionnaire</title>
-    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
 </head>
 <body>
 
@@ -19,19 +18,40 @@
         <h3>Questions</h3>
 
         <div id="question-list">
+
+        <!-- MUOKKAUS: olemassa olevat kysymykset -->
         <th:block th:if="${inquiry != null}">
-            <div th:each="question, stat : ${inquiry.questions}">
+            <div class="question" th:each="question, stat : ${inquiry.questions}">
                 <label th:text="'Question ' + ${stat.count}"></label>
                 <input name="questions" type="text"
                        th:value="${question.quest}" placeholder="Write a question">
+
+                <select name="types" onchange="toggleOptions(this)">
+                    <option value="TEXT"  th:selected="${question.type == 'TEXT'}">Avoin kysymys</option>
+                    <option value="RADIO" th:selected="${question.type == 'RADIO'}">Monivalinta (radio)</option>
+                </select>
+
+                <textarea name="options" placeholder="Yksi vaihtoehto per rivi"
+                          th:text="${question.optionsText}"
+                          th:style="${question.type == 'RADIO'} ? '' : 'display:none'"></textarea>
+
                 <button type="button" onclick="removeQuestion(this)">Delete</button>
             </div>
         </th:block>
 
+        <!-- UUSI KYSELY: vain yksi tyhjä kysymys, lisää tulee "Add question" -napilla -->
         <th:block th:unless="${inquiry != null}">
-            <div th:each="number : ${#numbers.sequence(1, 5)}">
-                <label th:text="'Question ' + ${number}"></label>
+            <div class="question">
+                <label>Question 1</label>
                 <input name="questions" type="text" placeholder="Write a question">
+
+                <select name="types" onchange="toggleOptions(this)">
+                    <option value="TEXT">Avoin kysymys</option>
+                    <option value="RADIO">Monivalinta (radio)</option>
+                </select>
+
+                <textarea name="options" placeholder="Yksi vaihtoehto per rivi" style="display:none"></textarea>
+
                 <button type="button" onclick="removeQuestion(this)">Delete</button>
             </div>
         </th:block>
@@ -50,12 +70,24 @@
             questionNumber++;
 
             const question = document.createElement('div');
+            question.className = 'question';
             question.innerHTML =
                 '<label>Question ' + questionNumber + '</label>' +
                 '<input name="questions" type="text" placeholder="Write a question">' +
+                '<select name="types" onchange="toggleOptions(this)">' +
+                '  <option value="TEXT">Avoin kysymys</option>' +
+                '  <option value="RADIO">Monivalinta (radio)</option>' +
+                '</select>' +
+                '<textarea name="options" placeholder="Yksi vaihtoehto per rivi" style="display:none"></textarea>' +
                 '<button type="button" onclick="removeQuestion(this)">Delete</button>';
 
             document.getElementById('question-list').appendChild(question);
+        }
+
+        // Näyttää vaihtoehtokentän vain monivalinnassa
+        function toggleOptions(select) {
+            const textarea = select.parentElement.querySelector('textarea[name="options"]');
+            textarea.style.display = select.value === 'RADIO' ? '' : 'none';
         }
 
         function removeQuestion(button) {

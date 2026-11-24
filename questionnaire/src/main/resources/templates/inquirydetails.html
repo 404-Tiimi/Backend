@@ -8,7 +8,7 @@
 </head>
 <body class="bg-light">
     <div class="container py-5" style="max-width: 800px;">
-    
+
     <h1 th:text="${inquiry.title}"></h1>
 
     <div class="card shadow-sm mb-4">
@@ -27,7 +27,13 @@
             <label th:for="'q' + ${question.id}"
             th:text="${stat.count} + '. ' + ${question.quest}">Question</label>
             <br>
-            <textarea th:id="'q' + ${question.id}"></textarea>
+            <textarea th:if="${question.type == 'TEXT'}" th:id="'q' + ${question.id}"></textarea>
+            <div th:if="${question.type == 'RADIO'}">
+                <label th:each="opt : ${question.options}" style="display:block">
+                    <input type="radio" th:name="'q' + ${question.id}" th:value="${opt}">
+                    <span th:text="${opt}"></span>
+                </label>
+            </div>
         </div>
     </form>
 

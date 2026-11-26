@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REST API documentation</title>
+    <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
+    <style>
+        .method { display: inline-block; min-width: 4.5rem; text-align: center; font-family: monospace; }
+        .path { font-family: monospace; font-size: 1.05rem; }
+        pre { background: #212529; color: #f8f9fa; padding: 1rem; border-radius: .375rem; margin-bottom: 0; }
+        .endpoint { scroll-margin-top: 1rem; }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">REST API documentation</h1>
+        <a th:href="@{/}" href="/" class="btn btn-outline-secondary">Back to inquiries</a>
+    </div>
+
+    <!-- Overview -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h5">Overview</h2>
+            <ul class="mb-3">
+                <li>All endpoints live under the base path <code>/rest</code>.</li>
+                <li>Requests and responses use JSON (<code>Content-Type: application/json</code>).</li>
+                <li>No login is required and CSRF protection is disabled for <code>/rest/**</code>.</li>
+                <li>CORS is allowed from <code>http://localhost:5173</code> and <code>https://404-Tiimi.github.io</code> for <code>GET</code>, <code>POST</code> and <code>OPTIONS</code>.</li>
+            </ul>
+
+            <h3 class="h6">Typical answering flow</h3>
+            <ol class="mb-0">
+                <li>Fetch the inquiry and its questions: <code>GET /rest/inquiry/{id}</code></li>
+                <li>Start an answering session: <code>POST /rest/sessions</code></li>
+                <li>Submit all answers with the returned session id: <code>POST /rest/answers</code></li>
+            </ol>
+        </div>
+    </div>
+
+    <!-- Endpoint summary -->
+    <div class="card shadow-sm mb-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Method</th>
+                        <th scope="col">Path</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="badge bg-success method">GET</span></td>
+                        <td><a class="path" href="#get-inquiries">/rest/inquiries</a></td>
+                        <td>List all inquiries with their questions</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-success method">GET</span></td>
+                        <td><a class="path" href="#get-inquiry">/rest/inquiry/{id}</a></td>
+                        <td>Get one inquiry by id</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-primary method">POST</span></td>
+                        <td><a class="path" href="#post-sessions">/rest/sessions</a></td>
+                        <td>Start a new answering session</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-success method">GET</span></td>
+                        <td><a class="path" href="#get-answers">/rest/answers</a></td>
+                        <td>List all saved answers</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge bg-primary method">POST</span></td>
+                        <td><a class="path" href="#post-answers">/rest/answers</a></td>
+                        <td>Save a batch of answers to a session</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- GET /rest/inquiries -->
+    <div class="card shadow-sm mb-4 endpoint" id="get-inquiries">
+        <div class="card-header bg-white">
+            <span class="badge bg-success method">GET</span>
+            <span class="path ms-2">/rest/inquiries</span>
+        </div>
+        <div class="card-body">
+            <p>Returns every inquiry in the database, including its questions.</p>
+
+            <h3 class="h6">Responses</h3>
+            <ul>
+                <li><code>200 OK</code> &ndash; array of inquiries (empty array if there are none).</li>
+            </ul>
+
+            <h3 class="h6">Example response</h3>
+<pre>[
+  {
+    "id": 1,
+    "title": "Customer feedback",
+    "description": "Tell us what you think",
+    "author": { "id": 1, "role": "ADMIN", "username": "admin" },
+    "createDate": "2026-11-20",
+    "deadlineDate": "2026-12-31",
+    "questions": [
+      { "id": 2, "quest": "What did you like?", "type": "TEXT", "options": [] },
+      { "id": 3, "quest": "Would you recommend us?", "type": "RADIO", "options": ["Yes", "No", "Maybe"] }
+    ]
+  }
+]</pre>
+        </div>
+    </div>
+
+    <!-- GET /rest/inquiry/{id} -->
+    <div class="card shadow-sm mb-4 endpoint" id="get-inquiry">
+        <div class="card-header bg-white">
+            <span class="badge bg-success method">GET</span>
+            <span class="path ms-2">/rest/inquiry/{id}</span>
+        </div>
+        <div class="card-body">
+            <p>Returns a single inquiry and its questions.</p>
+
+            <h3 class="h6">Path parameters</h3>
+            <table class="table table-sm">
+                <thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>integer</td><td>Id of the inquiry</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="h6">Responses</h3>
+            <ul>
+                <li><code>200 OK</code> &ndash; the inquiry object.</li>
+                <li><code>200 OK</code> with body <code>null</code> &ndash; no inquiry exists with that id.</li>
+            </ul>
+
+            <h3 class="h6">Example response</h3>
+<pre>{
+  "id": 1,
+  "title": "Customer feedback",
+  "description": "Tell us what you think",
+  "author": { "id": 1, "role": "ADMIN", "username": "admin" },
+  "createDate": "2026-11-20",
+  "deadlineDate": "2026-12-31",
+  "questions": [
+    { "id": 2, "quest": "What did you like?", "type": "TEXT", "options": [] },
+    { "id": 3, "quest": "Would you recommend us?", "type": "RADIO", "options": ["Yes", "No", "Maybe"] }
+  ]
+}</pre>
+        </div>
+    </div>
+
+    <!-- POST /rest/sessions -->
+    <div class="card shadow-sm mb-4 endpoint" id="post-sessions">
+        <div class="card-header bg-white">
+            <span class="badge bg-primary method">POST</span>
+            <span class="path ms-2">/rest/sessions</span>
+        </div>
+        <div class="card-body">
+            <p>Creates a new answering session with <code>startedAt</code> set to the current server time.
+               Use the returned <code>id</code> as <code>sessionId</code> when saving answers.</p>
+
+            <h3 class="h6">Request body</h3>
+            <p>None.</p>
+
+            <h3 class="h6">Responses</h3>
+            <ul>
+                <li><code>200 OK</code> &ndash; the created session.</li>
+            </ul>
+
+            <h3 class="h6">Example response</h3>
+<pre>{
+  "id": 7,
+  "startedAt": "2026-11-26T14:32:05.123456",
+  "completedAt": null
+}</pre>
+        </div>
+    </div>
+
+    <!-- GET /rest/answers -->
+    <div class="card shadow-sm mb-4 endpoint" id="get-answers">
+        <div class="card-header bg-white">
+            <span class="badge bg-success method">GET</span>
+            <span class="path ms-2">/rest/answers</span>
+        </div>
+        <div class="card-body">
+            <p>Returns every saved answer, each with its question and session.</p>
+
+            <h3 class="h6">Responses</h3>
+            <ul>
+                <li><code>200 OK</code> &ndash; array of answers (empty array if there are none).</li>
+            </ul>
+
+            <h3 class="h6">Example response</h3>
+<pre>[
+  {
+    "id": 10,
+    "question": { "id": 3, "quest": "Would you recommend us?", "type": "RADIO", "options": ["Yes", "No", "Maybe"] },
+    "session": { "id": 7, "startedAt": "2026-11-26T14:32:05.123456", "completedAt": null },
+    "answer": "Yes"
+  }
+]</pre>
+        </div>
+    </div>
+
+    <!-- POST /rest/answers -->
+    <div class="card shadow-sm mb-4 endpoint" id="post-answers">
+        <div class="card-header bg-white">
+            <span class="badge bg-primary method">POST</span>
+            <span class="path ms-2">/rest/answers</span>
+        </div>
+        <div class="card-body">
+            <p>Saves all answers in the request to an existing session.
+               If the session or any question is not found, nothing is saved.</p>
+
+            <h3 class="h6">Request body</h3>
+            <table class="table table-sm">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>sessionId</code></td><td>integer</td><td>Id returned by <code>POST /rest/sessions</code></td></tr>
+                    <tr><td><code>answers</code></td><td>array</td><td>List of answer objects</td></tr>
+                    <tr><td><code>answers[].questionId</code></td><td>integer</td><td>Id of the question being answered</td></tr>
+                    <tr><td><code>answers[].text</code></td><td>string</td><td>Free text, or the chosen option for a <code>RADIO</code> question</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="h6">Example request</h3>
+<pre>{
+  "sessionId": 7,
+  "answers": [
+    { "questionId": 2, "text": "Fast delivery" },
+    { "questionId": 3, "text": "Yes" }
+  ]
+}</pre>
+
+            <h3 class="h6 mt-3">Responses</h3>
+            <ul>
+                <li><code>200 OK</code> &ndash; array of the saved answers (same shape as <code>GET /rest/answers</code>).</li>
+                <li><code>404 Not Found</code> &ndash; <code>"Session not found"</code> or <code>"Question not found"</code>.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Data models -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h2 class="h5">Data models</h2>
+
+            <h3 class="h6 mt-3">Inquiry</h3>
+            <table class="table table-sm">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>integer</td><td>Inquiry id</td></tr>
+                    <tr><td><code>title</code></td><td>string</td><td>Title</td></tr>
+                    <tr><td><code>description</code></td><td>string | null</td><td>Description</td></tr>
+                    <tr><td><code>author</code></td><td>User | null</td><td>Creator of the inquiry</td></tr>
+                    <tr><td><code>createDate</code></td><td>date (<code>YYYY-MM-DD</code>)</td><td>Creation date</td></tr>
+                    <tr><td><code>deadlineDate</code></td><td>date | null</td><td>Answering deadline</td></tr>
+                    <tr><td><code>questions</code></td><td>Question[]</td><td>Questions in display order</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="h6 mt-3">Question</h3>
+            <table class="table table-sm">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>integer</td><td>Question id (use as <code>questionId</code> when answering)</td></tr>
+                    <tr><td><code>quest</code></td><td>string</td><td>Question text</td></tr>
+                    <tr><td><code>type</code></td><td><code>"TEXT"</code> | <code>"RADIO"</code></td><td>Open text or multiple choice</td></tr>
+                    <tr><td><code>options</code></td><td>string[]</td><td>Choices for <code>RADIO</code> questions; empty for <code>TEXT</code></td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="h6 mt-3">Session</h3>
+            <table class="table table-sm">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>integer</td><td>Session id</td></tr>
+                    <tr><td><code>startedAt</code></td><td>datetime</td><td>When the session was created</td></tr>
+                    <tr><td><code>completedAt</code></td><td>datetime | null</td><td>When the session was completed</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="h6 mt-3">Answer</h3>
+            <table class="table table-sm">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>integer</td><td>Answer id</td></tr>
+                    <tr><td><code>question</code></td><td>Question</td><td>The answered question</td></tr>
+                    <tr><td><code>session</code></td><td>Session</td><td>The session the answer belongs to</td></tr>
+                    <tr><td><code>answer</code></td><td>string</td><td>Answer text</td></tr>
+                </tbody>
+            </table>
+
+            <h3 class="h6 mt-3">User</h3>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Field</th><th>Type</th><th>Description</th></tr></thead>
+                <tbody>
+                    <tr><td><code>id</code></td><td>integer</td><td>User id</td></tr>
+                    <tr><td><code>role</code></td><td>string</td><td>User role</td></tr>
+                    <tr><td><code>username</code></td><td>string</td><td>Username</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -4,7 +4,7 @@ This project is an collaboration project in a course Ohjelmistoprojekti 1 where 
 Questionnaire is a survey service where users can anonymously answer to presented surveys via shared link. In the current state the survey creation supports open and multiple choice questions.
 <img width="987" height="737" alt="image" src="https://github.com/user-attachments/assets/f12ce902-234b-4bca-8149-0c8bf26aa97a" />
 
-#Deployment
+# Deployment
 This projects backend and database are deployed in https://csc.fi/ 
 via services
 Rahti (Backend)

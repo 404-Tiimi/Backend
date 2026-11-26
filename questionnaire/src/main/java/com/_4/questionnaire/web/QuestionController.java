@@ -50,6 +50,12 @@ public class QuestionController {
         return "inquiry.html"; // inquiry.html
     }
 
+    // Näyttää REST-rajapinnan dokumentaation
+    @RequestMapping(value = "/restdocumentation")
+    public String restDocumentation(){
+        return "restdocumentation"; // restdocumentation.html
+    }
+
     // Näyttää yhden kyselyn tiedot
     @RequestMapping (value = "/view/{id}")
     public String viewInquiry(@PathVariable ("id") Integer id ,Model model){

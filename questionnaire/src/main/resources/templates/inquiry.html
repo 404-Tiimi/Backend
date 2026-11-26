@@ -7,120 +7,115 @@
     <link type="text/css" rel="stylesheet" href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" />
 </head>
 <body class="bg-light">
-
     <div class="container py-5" style="max-width: 800px;">
-
-    <h1 class="mb-4"
-     th:text="${inquiry != null} ? 'Edit Questionnaire' : 'Create Questionnaire'">
-    </h1>
-
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
         <form th:action="${inquiry != null} ? @{/save} : @{/add}" method="post">
             <input th:if="${inquiry != null}" type="hidden" name="id" th:value="${inquiry.id}">
-            <label for="title">Questionnaire title:</label>
-            <input id="title" name="title" type="text" class="form-control"
-                th:value="${inquiry != null} ? ${inquiry.title} : ''" required>
-        </div>
-    </div>
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-header bg-dark text-white">
-            <h3 class="mb-0">Questions</h3>
-        </div>
+            <h1 class="mb-4"
+                th:text="${inquiry != null} ? 'Edit Questionnaire' : 'Create Questionnaire'">
+            </h1>
 
-    <div class="card-body">
-        <div id="question-list">
-
-        <!-- MUOKKAUS: olemassa olevat kysymykset -->
-        <th:block th:if="${inquiry != null}">
-            <div class="question" th:each="question, stat : ${inquiry.questions}">
-                <label th:text="'Question ' + ${stat.count}"></label>
-                <input name="questions" type="text"
-                       th:value="${question.quest}" placeholder="Write a question">
-                <select name="types" onchange="toggleOptions(this)">
-                    <option value="TEXT"  th:selected="${question.type == 'TEXT'}">Avoin kysymys</option>
-                    <option value="RADIO" th:selected="${question.type == 'RADIO'}">Monivalinta (radio)</option>
-                </select>
-
-                <textarea name="options" placeholder="Yksi vaihtoehto per rivi"
-                          th:text="${question.optionsText}"
-                          th:style="${question.type == 'RADIO'} ? '' : 'display:none'"></textarea>
-
-                <button type="button" class="btn btn-outline-danger" onclick="removeQuestion(this)">Delete</button>
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <label for="title" class="form-label">Questionnaire title:</label>
+                    <input id="title" name="title" type="text" class="form-control"
+                           th:value="${inquiry != null} ? ${inquiry.title} : ''" required>
+                </div>
             </div>
-    </div>
-        </th:block>
-    </div>
 
-        <!-- UUSI KYSELY: vain yksi tyhjä kysymys, lisää tulee "Add question" -napilla -->
-        <th:block th:unless="${inquiry != null}">
-            <div class="question">
-                <label>Question 1</label>
-                <input name="questions" type="text" placeholder="Write a question">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h3 class="mb-0">Questions</h3>
+                </div>
+                <div class="card-body">
+                    <div id="question-list">
+                        <th:block th:if="${inquiry != null}">
+                            <div class="question mb-3" th:each="question, stat : ${inquiry.questions}">
+                                <label class="form-label" th:text="'Question ' + ${stat.count}"></label>
+                                <input name="questions" type="text" class="form-control"
+                                       th:value="${question.quest}" placeholder="Write a question"
+                                       pattern=".*\S.*" required>
+                                <select name="types" class="form-select mt-2" onchange="toggleOptions(this)">
+                                    <option value="TEXT" th:selected="${question.type == 'TEXT'}">Avoin kysymys</option>
+                                    <option value="RADIO" th:selected="${question.type == 'RADIO'}">Monivalinta (radio)</option>
+                                </select>
+                                <textarea name="options" class="form-control mt-2" placeholder="Yksi vaihtoehto per rivi"
+                                          th:text="${question.optionsText}"
+                                          th:style="${question.type == 'RADIO'} ? '' : 'display:none'"></textarea>
+                                <button type="button" class="btn btn-outline-danger mt-2" onclick="removeQuestion(this)">Delete</button>
+                            </div>
+                        </th:block>
 
-                <select name="types" onchange="toggleOptions(this)">
-                    <option value="TEXT">Avoin kysymys</option>
-                    <option value="RADIO">Monivalinta (radio)</option>
-                </select>
+                        <div class="question mb-3"
+                             th:if="${inquiry == null or #lists.isEmpty(inquiry.questions)}">
+                            <label class="form-label">Question 1</label>
+                            <input name="questions" type="text" class="form-control"
+                                   placeholder="Write a question" pattern=".*\S.*" required>
+                            <select name="types" class="form-select mt-2" onchange="toggleOptions(this)">
+                                <option value="TEXT">Avoin kysymys</option>
+                                <option value="RADIO">Monivalinta (radio)</option>
+                            </select>
+                            <textarea name="options" class="form-control mt-2"
+                                      placeholder="Yksi vaihtoehto per rivi" style="display:none"></textarea>
+                            <button type="button" class="btn btn-outline-danger mt-2" onclick="removeQuestion(this)">Delete</button>
+                        </div>
+                    </div>
 
-                <textarea name="options" placeholder="Yksi vaihtoehto per rivi" style="display:none"></textarea>
-
-                <button type="button" onclick="removeQuestion(this)">Delete</button>
+                    <div class="d-flex justify-content-between mt-4">
+                        <a th:href="@{/}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="button" class="btn btn-outline-primary" onclick="addQuestion()">Add question</button>
+                        <button type="submit" class="btn btn-primary">Save questionnaire</button>
+                    </div>
+                </div>
             </div>
-        </th:block>
-        </div>
-
-        <br>
-        <div class="d-flex justify-content-between">
-            <a th:href="@{/}" class="btn btn-outline-secondary">Cancel</a>
-            <button type="button" onclick="addQuestion()">Add question</button>
-            <button type="submit">Save questionnaire</button>
-        </div>
-    </form>
+        </form>
     </div>
 
     <script>
-        let questionNumber = document.querySelectorAll('#question-list > div').length;
+        let questionNumber;
 
         function addQuestion() {
-            questionNumber++;
-
             const question = document.createElement('div');
-            question.className = 'question';
+            question.className = 'question mb-3';
             question.innerHTML =
-                '<label>Question ' + questionNumber + '</label>' +
-                '<input name="questions" type="text" placeholder="Write a question">' +
-                '<select name="types" onchange="toggleOptions(this)">' +
+                '<label class="form-label"></label>' +
+                '<input name="questions" type="text" class="form-control" placeholder="Write a question" pattern=".*\\S.*" required>' +
+                '<select name="types" class="form-select mt-2" onchange="toggleOptions(this)">' +
                 '  <option value="TEXT">Avoin kysymys</option>' +
                 '  <option value="RADIO">Monivalinta (radio)</option>' +
                 '</select>' +
-                '<textarea name="options" placeholder="Yksi vaihtoehto per rivi" style="display:none"></textarea>' +
-                '<button type="button" onclick="removeQuestion(this)">Delete</button>';
+                '<textarea name="options" class="form-control mt-2" placeholder="Yksi vaihtoehto per rivi" style="display:none"></textarea>' +
+                '<button type="button" class="btn btn-outline-danger mt-2" onclick="removeQuestion(this)">Delete</button>';
 
             document.getElementById('question-list').appendChild(question);
+            updateQuestionNumbers();
         }
 
-        // Näyttää vaihtoehtokentän vain monivalinnassa
         function toggleOptions(select) {
             const textarea = select.parentElement.querySelector('textarea[name="options"]');
             textarea.style.display = select.value === 'RADIO' ? '' : 'none';
         }
 
         function removeQuestion(button) {
+            if (document.querySelectorAll('#question-list > .question').length <= 1) {
+                return;
+            }
+
             button.parentElement.remove();
             updateQuestionNumbers();
         }
 
         function updateQuestionNumbers() {
-            const questions = document.querySelectorAll('#question-list > div');
+            const questions = document.querySelectorAll('#question-list > .question');
             questionNumber = questions.length;
 
             questions.forEach((question, index) => {
                 question.querySelector('label').textContent = 'Question ' + (index + 1);
+                question.querySelector('button').disabled = questionNumber === 1;
             });
         }
-    </script>
 
+        updateQuestionNumbers();
+    </script>
 </body>
 </html>

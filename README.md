@@ -8,9 +8,9 @@ Questionnaire is a survey service where users can anonymously answer surveys via
 The backend is built with java 25 and spring boot, using:
 
 - **Spring Boot**
-- - Spring MVC web pages and REST endpoints.
-- - Spring Security authentication and access control.
-- - Spring Data JPA database access.
+  - Spring MVC web pages and REST endpoints.
+  - Spring Security authentication and access control.
+  - Spring Data JPA database access.
 - **Thymeleaf** server-rendered HTML pages.
 - **PostgreSQL** storing surveys, questions, and responses.
 - **Maven** dependency management, testing, and builds.
